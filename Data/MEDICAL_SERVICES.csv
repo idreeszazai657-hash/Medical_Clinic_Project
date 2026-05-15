@@ -1,0 +1,61 @@
+service_id,service_name,price
+1,Consultation,50.0
+2,Blood Test,25.0
+3,X-Ray,100.0
+4,MRI Scan,400.0
+5,ECG,75.0
+6,Ultrasound,150.0
+7,Vaccination,30.0
+8,Physical Therapy,80.0
+9,Specialized Test 9,89.05
+10,Specialized Test 10,205.31
+11,Specialized Test 11,473.28
+12,Specialized Test 12,60.65
+13,Specialized Test 13,67.01
+14,Specialized Test 14,267.98
+15,Specialized Test 15,125.62
+16,Specialized Test 16,468.92
+17,Specialized Test 17,422.2
+18,Specialized Test 18,348.66
+19,Specialized Test 19,300.83
+20,Specialized Test 20,131.93
+21,Specialized Test 21,451.88
+22,Specialized Test 22,418.15
+23,Specialized Test 23,54.49
+24,Specialized Test 24,440.67
+25,Specialized Test 25,339.43
+26,Specialized Test 26,204.56
+27,Specialized Test 27,160.79
+28,Specialized Test 28,252.5
+29,Specialized Test 29,175.36
+30,Specialized Test 30,456.45
+31,Specialized Test 31,208.28
+32,Specialized Test 32,298.82
+33,Specialized Test 33,208.66
+34,Specialized Test 34,444.09
+35,Specialized Test 35,311.58
+36,Specialized Test 36,294.87
+37,Specialized Test 37,494.46
+38,Specialized Test 38,123.21
+39,Specialized Test 39,97.22
+40,Specialized Test 40,248.86
+41,Specialized Test 41,62.86
+42,Specialized Test 42,234.28
+43,Specialized Test 43,230.32
+44,Specialized Test 44,298.06
+45,Specialized Test 45,88.76
+46,Specialized Test 46,75.2
+47,Specialized Test 47,439.49
+48,Specialized Test 48,355.78
+49,Specialized Test 49,287.06
+50,Specialized Test 50,157.71
+51,Specialized Test 51,357.41
+52,Specialized Test 52,98.82
+53,Specialized Test 53,123.92
+54,Specialized Test 54,353.0
+55,Specialized Test 55,358.13
+56,Specialized Test 56,88.89
+57,Specialized Test 57,380.05
+58,Specialized Test 58,142.37
+59,Specialized Test 59,443.33
+60,Specialized Test 60,232.92

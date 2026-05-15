@@ -1,0 +1,61 @@
+prescription_id,visit_id,medicine_name,dosage,instructions
+1,29,Amlodipine,20mg,Take as needed for pain
+2,42,Paracetamol,10mg,Take as needed for pain
+3,44,Metformin,50mg,Take twice daily after meals
+4,22,Amlodipine,20mg,Take as needed for pain
+5,17,Albuterol,20mg,Take twice daily after meals
+6,37,Metformin,50mg,Take once daily
+7,58,Ibuprofen,200mg,Take twice daily after meals
+8,27,Amoxicillin,10mg,Take twice daily after meals
+9,44,Amoxicillin,500mg,Take twice daily after meals
+10,12,Losartan,500mg,Take twice daily after meals
+11,16,Omeprazole,50mg,Take as needed for pain
+12,29,Atorvastatin,500mg,Take as needed for pain
+13,12,Gabapentin,200mg,Take once daily
+14,4,Omeprazole,10mg,Take twice daily after meals
+15,46,Lisinopril,20mg,Take as needed for pain
+16,50,Omeprazole,500mg,Take twice daily after meals
+17,6,Losartan,20mg,Take twice daily after meals
+18,10,Lisinopril,500mg,Take twice daily after meals
+19,26,Atorvastatin,200mg,Take twice daily after meals
+20,30,Ibuprofen,200mg,Take as needed for pain
+21,16,Paracetamol,20mg,Take once daily
+22,47,Paracetamol,20mg,Take once daily
+23,4,Albuterol,20mg,Take twice daily after meals
+24,3,Metformin,20mg,Take once daily
+25,12,Metformin,500mg,Take once daily
+26,23,Amlodipine,50mg,Take as needed for pain
+27,27,Atorvastatin,20mg,Take as needed for pain
+28,11,Atorvastatin,200mg,Take once daily
+29,4,Amlodipine,20mg,Take once daily
+30,1,Omeprazole,10mg,Take once daily
+31,24,Atorvastatin,200mg,Take once daily
+32,34,Lisinopril,500mg,Take as needed for pain
+33,54,Losartan,50mg,Take as needed for pain
+34,55,Paracetamol,500mg,Take twice daily after meals
+35,19,Lisinopril,200mg,Take once daily
+36,51,Albuterol,50mg,Take once daily
+37,42,Amlodipine,10mg,Take as needed for pain
+38,42,Lisinopril,500mg,Take twice daily after meals
+39,14,Paracetamol,50mg,Take as needed for pain
+40,18,Lisinopril,10mg,Take as needed for pain
+41,15,Ibuprofen,10mg,Take twice daily after meals
+42,37,Amoxicillin,50mg,Take twice daily after meals
+43,47,Gabapentin,500mg,Take as needed for pain
+44,14,Paracetamol,500mg,Take as needed for pain
+45,24,Amoxicillin,500mg,Take as needed for pain
+46,18,Albuterol,50mg,Take as needed for pain
+47,34,Metformin,20mg,Take once daily
+48,53,Ibuprofen,500mg,Take twice daily after meals
+49,18,Omeprazole,50mg,Take as needed for pain
+50,30,Amoxicillin,200mg,Take once daily
+51,40,Metformin,10mg,Take twice daily after meals
+52,37,Lisinopril,50mg,Take as needed for pain
+53,29,Metformin,500mg,Take as needed for pain
+54,43,Omeprazole,20mg,Take twice daily after meals
+55,47,Losartan,500mg,Take as needed for pain
+56,4,Albuterol,20mg,Take twice daily after meals
+57,53,Gabapentin,10mg,Take once daily
+58,60,Gabapentin,50mg,Take twice daily after meals
+59,44,Metformin,10mg,Take as needed for pain
+60,2,Amlodipine,20mg,Take as needed for pain

@@ -1,0 +1,61 @@
+doctor_id,first_name,last_name,specialty,contact,room_number
+1,Linda,Zazai,Orthopedics,555-DOC-9016,Room 128
+2,Joseph,Robinson,Ophthalmology,555-DOC-6643,Room 160
+3,David,Lewis,Neurology,555-DOC-3554,Room 179
+4,Robert,Wilson,Psychiatry,555-DOC-4088,Room 122
+5,Robert,Martinez,Cardiology,555-DOC-8848,Room 332
+6,Patricia,Zazai,Pediatrics,555-DOC-5496,Room 103
+7,David,Garcia,Cardiology,555-DOC-9191,Room 172
+8,Daniel,Moore,Ophthalmology,555-DOC-4808,Room 361
+9,Thomas,Sanchez,Dermatology,555-DOC-9176,Room 243
+10,Linda,Hernandez,Ophthalmology,555-DOC-8775,Room 244
+11,David,Brown,General Practice,555-DOC-4022,Room 385
+12,Nancy,Wilson,Pediatrics,555-DOC-4578,Room 219
+13,Anthony,Brown,Psychiatry,555-DOC-8126,Room 181
+14,Idrees,Smith,Ophthalmology,555-DOC-9944,Room 391
+15,James,Lopez,Ophthalmology,555-DOC-5296,Room 115
+16,Charles,Gonzalez,Cardiology,555-DOC-8977,Room 291
+17,Joseph,Ramirez,Pediatrics,555-DOC-3507,Room 259
+18,Karen,Davis,Radiology,555-DOC-8649,Room 230
+19,David,Davis,Radiology,555-DOC-9396,Room 316
+20,Nancy,Hernandez,Orthopedics,555-DOC-7803,Room 326
+21,Christopher,Williams,Orthopedics,555-DOC-4023,Room 244
+22,Jennifer,Williams,Neurology,555-DOC-3062,Room 207
+23,Anthony,Williams,Cardiology,555-DOC-7519,Room 276
+24,William,Garcia,General Practice,555-DOC-7782,Room 266
+25,Patricia,Garcia,Psychiatry,555-DOC-2979,Room 172
+26,Farman,Clark,Pediatrics,555-DOC-4539,Room 157
+27,Barbara,Clark,Ophthalmology,555-DOC-8890,Room 323
+28,Matthew,Davis,Radiology,555-DOC-1762,Room 166
+29,Thomas,Brown,Oncology,555-DOC-7861,Room 219
+30,Susan,Lewis,Orthopedics,555-DOC-3338,Room 317
+31,Susan,Lee,Oncology,555-DOC-6560,Room 325
+32,John,Robinson,Cardiology,555-DOC-6924,Room 353
+33,Patricia,Thomas,Orthopedics,555-DOC-7451,Room 361
+34,Anthony,Thompson,Pediatrics,555-DOC-3470,Room 130
+35,Mary,Zazai,Cardiology,555-DOC-3455,Room 239
+36,John,Harris,Radiology,555-DOC-1163,Room 187
+37,Joseph,Taylor,Dermatology,555-DOC-3202,Room 191
+38,Nancy,Martinez,Ophthalmology,555-DOC-6020,Room 187
+39,Linda,Hernandez,Radiology,555-DOC-8902,Room 316
+40,Thomas,Robinson,Oncology,555-DOC-5145,Room 309
+41,Joseph,Afridi,Neurology,555-DOC-1136,Room 392
+42,Nancy,Davis,Oncology,555-DOC-6609,Room 251
+43,Elizabeth,Afridi,Neurology,555-DOC-2206,Room 119
+44,Betty,Gonzalez,Neurology,555-DOC-1299,Room 261
+45,Lisa,Gonzalez,Pediatrics,555-DOC-1350,Room 118
+46,Mark,Jackson,Psychiatry,555-DOC-8207,Room 178
+47,Margaret,Smith,Orthopedics,555-DOC-1297,Room 184
+48,Jessica,Robinson,Dermatology,555-DOC-8754,Room 167
+49,Margaret,Moore,Cardiology,555-DOC-9683,Room 275
+50,Jessica,Clark,Cardiology,555-DOC-7094,Room 233
+51,David,Lewis,Cardiology,555-DOC-7888,Room 275
+52,Michael,Martinez,Pediatrics,555-DOC-9869,Room 161
+53,Joseph,Clark,Oncology,555-DOC-6030,Room 177
+54,Lisa,Davis,General Practice,555-DOC-3520,Room 324
+55,Susan,Afridi,Pediatrics,555-DOC-4457,Room 341
+56,Michael,Brown,Ophthalmology,555-DOC-2172,Room 278
+57,Betty,Williams,Psychiatry,555-DOC-5064,Room 278
+58,Mark,Rodriguez,Dermatology,555-DOC-9142,Room 143
+59,Margaret,Lee,Ophthalmology,555-DOC-7409,Room 152
+60,Jennifer,Rodriguez,General Practice,555-DOC-6010,Room 342
