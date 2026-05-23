@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Bills{% endblock %}
+{% block page_title %}Billing{% endblock %}
+
+{% block content %}
+<div class="stats-grid" style="grid-template-columns: 1fr 1fr; max-width: 600px;">
+    <div class="stat-card" style="border-color: rgba(16, 185, 129, 0.2);">
+        <div class="stat-label">Total Paid Revenue</div>
+        <div class="stat-value" style="color: var(--success);">${{ "%.2f"|format(total_paid) }}</div>
+    </div>
+    <div class="stat-card" style="border-color: rgba(245, 158, 11, 0.2);">
+        <div class="stat-label">Total Unpaid</div>
+        <div class="stat-value" style="color: var(--warning);">${{ "%.2f"|format(total_unpaid) }}</div>
+    </div>
+</div>
+
+<div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
+    <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="billSearch" placeholder="Search bills...">
+    </div>
+    <div class="filter-tabs" id="statusFilter">
+        <button class="filter-tab active" data-status="all">All Bills</button>
+        <button class="filter-tab" data-status="Paid">Paid</button>
+        <button class="filter-tab" data-status="Unpaid">Unpaid</button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fa-solid fa-file-invoice-dollar" style="margin-right:8px;color:var(--warning);"></i>All Bills ({{ bills|length }})</h3>
+    </div>
+    <div class="table-wrapper">
+        <table id="billTable">
+            <thead>
+                <tr><th>ID</th><th>Amount</th><th>Status</th><th>Patient</th><th>Visit Date</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for b in bills %}
+                <tr data-status="{{ b.status }}">
+                    <td>#{{ b.bill_id }}</td>
+                    <td style="font-weight:600;color:var(--accent);">${{ "%.2f"|format(b.total_amount) }}</td>
+                    <td><span class="badge badge-{{ b.status|lower }}">{{ b.status }}</span></td>
+                    <td>{{ b.pf }} {{ b.pl }}</td>
+                    <td><a href="{{ url_for('visit_detail', vid=b.visit_id) }}" style="text-decoration:underline;">{{ b.visit_date.strftime('%b %d, %Y') if b.visit_date else '' }}</a></td>
+                    <td>
+                        <div class="action-btns">
+                            {% if b.status == 'Unpaid' %}
+                            <form method="POST" action="{{ url_for('bill_pay', bid=b.bill_id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-success btn-sm" title="Mark as Paid"><i class="fa-solid fa-check"></i></button>
+                            </form>
+                            {% endif %}
+                            <form method="POST" action="{{ url_for('bill_delete', bid=b.bill_id) }}" style="display:inline;" onsubmit="return confirm('Delete this bill?')">
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+tableSearch('billSearch', 'billTable');
+
+// Status filter
+document.querySelectorAll('#statusFilter .filter-tab').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('#statusFilter .filter-tab').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const status = this.dataset.status;
+        document.querySelectorAll('#billTable tbody tr').forEach(row => {
+            row.style.display = (status === 'all' || row.dataset.status === status) ? '' : 'none';
+        });
+    });
+});
+</script>
+{% endblock %}

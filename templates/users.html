@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}User Management{% endblock %}
+{% block page_title %}User Management (Admin){% endblock %}
+
+{% block top_actions %}
+<button class="btn btn-primary btn-sm" onclick="openModal('addUserModal')">
+    <i class="fa-solid fa-plus"></i> Create User
+</button>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fa-solid fa-users-gear" style="margin-right:8px;color:var(--accent);"></i>System Users ({{ users|length }})</h3>
+    </div>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr><th>ID</th><th>Username</th><th>Name</th><th>Role</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>#{{ u.user_id }}</td>
+                    <td><strong>{{ u.username }}</strong></td>
+                    <td>{{ u.first_name }} {{ u.last_name }}</td>
+                    <td><span class="badge badge-{{ u.role|lower }}">{{ u.role }}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn btn-warning btn-sm" onclick="resetPassword({{ u.user_id }}, '{{ u.username }}')" style="background:var(--warning);color:#fff;border:none;">
+                                <i class="fa-solid fa-key"></i> Reset Password
+                            </button>
+                            {% if u.user_id != session.get('user_id') %}
+                            <form method="POST" action="{{ url_for('user_delete', uid=u.user_id) }}" style="display:inline;" onsubmit="return confirm('Delete this user account?')">
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal-overlay" id="addUserModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Create System User</h3>
+            <button class="modal-close" onclick="closeModal('addUserModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form method="POST" action="{{ url_for('user_add') }}">
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group"><label>First Name</label><input type="text" name="first_name" class="form-control" required></div>
+                    <div class="form-group"><label>Last Name</label><input type="text" name="last_name" class="form-control" required></div>
+                </div>
+                <div class="form-group"><label>Username</label><input type="text" name="username" class="form-control" required></div>
+                <div class="form-group"><label>Password</label><input type="password" name="password" class="form-control" required></div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select name="role" class="form-control" required>
+                        <option value="Receptionist">Receptionist</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addUserModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal-overlay" id="resetPwModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Reset Password</h3>
+            <button class="modal-close" onclick="closeModal('resetPwModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form method="POST" id="resetPwForm">
+            <div class="modal-body">
+                <p style="margin-bottom:16px;color:var(--text-secondary);">Reset password for user: <strong id="rp_username" style="color:var(--text-primary);"></strong></p>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" name="new_password" class="form-control" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('resetPwModal')">Cancel</button>
+                <button type="submit" class="btn btn-warning" style="background:var(--warning);color:#fff;border:none;"><i class="fa-solid fa-check"></i> Reset Password</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function resetPassword(uid, username) {
+    document.getElementById('resetPwForm').action = '/users/reset-password/' + uid;
+    document.getElementById('rp_username').textContent = username;
+    openModal('resetPwModal');
+}
+</script>
+{% endblock %}

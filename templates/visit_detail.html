@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% block title %}Visit #{{ visit.visit_id }}{% endblock %}
+{% block page_title %}Visit Details{% endblock %}
+
+{% block top_actions %}
+<a href="{{ url_for('visits') }}" class="btn btn-secondary btn-sm">
+    <i class="fa-solid fa-arrow-left"></i> Back to Visits
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Visit Info -->
+<div class="detail-grid">
+    <div class="detail-item">
+        <div class="label">Visit ID</div>
+        <div class="value">#{{ visit.visit_id }}</div>
+    </div>
+    <div class="detail-item">
+        <div class="label">Patient</div>
+        <div class="value">{{ visit.pf }} {{ visit.pl }}</div>
+    </div>
+    <div class="detail-item">
+        <div class="label">Doctor</div>
+        <div class="value">Dr. {{ visit.df }} {{ visit.dl }}</div>
+    </div>
+    <div class="detail-item">
+        <div class="label">Specialty</div>
+        <div class="value"><span class="badge-specialty">{{ visit.specialty }}</span></div>
+    </div>
+    <div class="detail-item">
+        <div class="label">Room</div>
+        <div class="value">{{ visit.room_number }}</div>
+    </div>
+    <div class="detail-item">
+        <div class="label">Date</div>
+        <div class="value">{{ visit.visit_date.strftime('%b %d, %Y at %I:%M %p') if visit.visit_date else '—' }}</div>
+    </div>
+    <div class="detail-item" style="grid-column:1/-1;">
+        <div class="label">Diagnosis</div>
+        <div class="value">{{ visit.diagnosis or 'No diagnosis recorded' }}</div>
+    </div>
+</div>
+
+<!-- Prescriptions Section -->
+<div class="card" style="margin-bottom:24px;">
+    <div class="card-header">
+        <h3><i class="fa-solid fa-prescription-bottle-medical" style="margin-right:8px;color:var(--accent-pink);"></i>Prescriptions ({{ prescriptions|length }})</h3>
+        <button class="btn btn-primary btn-sm" onclick="openModal('addRxModal')"><i class="fa-solid fa-plus"></i> Add</button>
+    </div>
+    {% if prescriptions %}
+    <div class="table-wrapper">
+        <table>
+            <thead><tr><th>ID</th><th>Medicine</th><th>Dosage</th><th>Instructions</th><th></th></tr></thead>
+            <tbody>
+                {% for rx in prescriptions %}
+                <tr>
+                    <td>#{{ rx.prescription_id }}</td>
+                    <td><strong>{{ rx.medicine_name }}</strong></td>
+                    <td>{{ rx.dosage }}</td>
+                    <td>{{ rx.instructions or '—' }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('prescription_delete', pid=rx.prescription_id) }}" onsubmit="return confirm('Delete?')">
+                            <input type="hidden" name="redirect_to" value="{{ url_for('visit_detail', vid=visit.visit_id) }}">
+                            <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="card-body"><div class="empty-state"><i class="fa-solid fa-prescription"></i><h4>No prescriptions</h4><p>Add a prescription for this visit.</p></div></div>
+    {% endif %}
+</div>
+
+<!-- Services Section -->
+<div class="card" style="margin-bottom:24px;">
+    <div class="card-header">
+        <h3><i class="fa-solid fa-stethoscope" style="margin-right:8px;color:var(--accent-blue);"></i>Services ({{ visit_services|length }})</h3>
+        <button class="btn btn-primary btn-sm" onclick="openModal('addServiceModal')"><i class="fa-solid fa-plus"></i> Assign</button>
+    </div>
+    {% if visit_services %}
+    <div class="table-wrapper">
+        <table>
+            <thead><tr><th>Service</th><th>Price</th><th></th></tr></thead>
+            <tbody>
+                {% for vs in visit_services %}
+                <tr>
+                    <td><strong>{{ vs.service_name }}</strong></td>
+                    <td>${{ "%.2f"|format(vs.price) }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('visit_service_delete', vsid=vs.vs_id) }}" onsubmit="return confirm('Remove service?')">
+                            <input type="hidden" name="visit_id" value="{{ visit.visit_id }}">
+                            <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="card-body"><div class="empty-state"><i class="fa-solid fa-stethoscope"></i><h4>No services assigned</h4><p>Assign medical services to this visit.</p></div></div>
+    {% endif %}
+</div>
+
+<!-- Bill Section -->
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fa-solid fa-file-invoice-dollar" style="margin-right:8px;color:var(--warning);"></i>Bill</h3>
+    </div>
+    <div class="card-body">
+        {% if bill %}
+        <div class="detail-grid">
+            <div class="detail-item">
+                <div class="label">Bill ID</div>
+                <div class="value">#{{ bill.bill_id }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="label">Amount</div>
+                <div class="value" style="font-size:24px;color:var(--accent);">${{ "%.2f"|format(bill.total_amount) }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="label">Status</div>
+                <div class="value">
+                    <span class="badge badge-{{ bill.status|lower }}">{{ bill.status }}</span>
+                    {% if bill.status == 'Unpaid' %}
+                    <form method="POST" action="{{ url_for('bill_pay', bid=bill.bill_id) }}" style="display:inline;margin-left:12px;">
+                        <input type="hidden" name="redirect_to" value="{{ url_for('visit_detail', vid=visit.visit_id) }}">
+                        <button type="submit" class="btn btn-success btn-sm"><i class="fa-solid fa-check"></i> Mark as Paid</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <form method="POST" action="{{ url_for('bill_add') }}" style="max-width:400px;">
+            <input type="hidden" name="visit_id" value="{{ visit.visit_id }}">
+            <input type="hidden" name="redirect_to" value="{{ url_for('visit_detail', vid=visit.visit_id) }}">
+            <div class="form-group" style="padding: 12px; background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.2); border-radius: var(--radius-sm); margin-bottom: 16px;">
+                <i class="fa-solid fa-calculator" style="color: var(--accent); margin-right: 8px;"></i>
+                <span style="font-size: 13px; color: var(--text-primary);">Total amount will be automatically calculated based on the assigned medical services.</span>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status" class="form-control">
+                    <option value="Unpaid">Unpaid</option>
+                    <option value="Paid">Paid</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Create Bill</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Add Prescription Modal -->
+<div class="modal-overlay" id="addRxModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Add Prescription</h3>
+            <button class="modal-close" onclick="closeModal('addRxModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form method="POST" action="{{ url_for('prescription_add') }}">
+            <input type="hidden" name="visit_id" value="{{ visit.visit_id }}">
+            <input type="hidden" name="redirect_to" value="{{ url_for('visit_detail', vid=visit.visit_id) }}">
+            <div class="modal-body">
+                <div class="form-group"><label>Medicine Name</label><input type="text" name="medicine_name" class="form-control" required></div>
+                <div class="form-group"><label>Dosage</label><input type="text" name="dosage" class="form-control" placeholder="e.g. 500mg" required></div>
+                <div class="form-group"><label>Instructions</label><textarea name="instructions" class="form-control" placeholder="e.g. Take twice daily after meals"></textarea></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addRxModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Add</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add Service Modal -->
+<div class="modal-overlay" id="addServiceModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Assign Service</h3>
+            <button class="modal-close" onclick="closeModal('addServiceModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form method="POST" action="{{ url_for('visit_service_add') }}">
+            <input type="hidden" name="visit_id" value="{{ visit.visit_id }}">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Medical Service</label>
+                    <select name="service_id" class="form-control" required>
+                        <option value="">Select service...</option>
+                        {% for s in all_services %}
+                        <option value="{{ s.service_id }}">{{ s.service_name }} — ${{ "%.2f"|format(s.price) }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addServiceModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Assign</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Visits{% endblock %}
+{% block page_title %}Visits{% endblock %}
+
+{% block top_actions %}
+<button class="btn btn-primary btn-sm" onclick="openModal('addVisitModal')">
+    <i class="fa-solid fa-plus"></i> New Visit
+</button>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:20px;">
+    <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="visitSearch" placeholder="Search visits...">
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fa-solid fa-calendar-check" style="margin-right:8px;color:var(--info);"></i>All Visits ({{ visits|length }})</h3>
+    </div>
+    <div class="table-wrapper">
+        <table id="visitTable">
+            <thead>
+                <tr><th>ID</th><th>Patient</th><th>Doctor</th><th>Specialty</th><th>Date</th><th>Diagnosis</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for v in visits %}
+                <tr>
+                    <td>#{{ v.visit_id }}</td>
+                    <td><strong>{{ v.pf }} {{ v.pl }}</strong></td>
+                    <td>Dr. {{ v.df }} {{ v.dl }}</td>
+                    <td><span class="badge-specialty">{{ v.specialty }}</span></td>
+                    <td>{{ v.visit_date.strftime('%b %d, %Y %I:%M %p') if v.visit_date else '' }}</td>
+                    <td>{{ v.diagnosis or '—' }}</td>
+                    <td>
+                        <div class="action-btns">
+                            <a href="{{ url_for('visit_detail', vid=v.visit_id) }}" class="btn btn-secondary btn-sm"><i class="fa-solid fa-eye"></i></a>
+                            <form method="POST" action="{{ url_for('visit_delete', vid=v.visit_id) }}" style="display:inline;" onsubmit="return confirm('Delete this visit? This will also delete related prescriptions, services, and bills.')">
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Visit Modal -->
+<div class="modal-overlay" id="addVisitModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>New Visit</h3>
+            <button class="modal-close" onclick="closeModal('addVisitModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form method="POST" action="{{ url_for('visit_add') }}">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Patient</label>
+                    <select name="patient_id" class="form-control" required>
+                        <option value="">Select patient...</option>
+                        {% for p in patients %}
+                        <option value="{{ p.patient_id }}">{{ p.first_name }} {{ p.last_name }} (#{{ p.patient_id }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Doctor</label>
+                    <select name="doctor_id" class="form-control" required>
+                        <option value="">Select doctor...</option>
+                        {% for d in doctors %}
+                        <option value="{{ d.doctor_id }}">Dr. {{ d.first_name }} {{ d.last_name }} — {{ d.specialty }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Visit Date &amp; Time</label>
+                    <input type="datetime-local" name="visit_date" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Diagnosis</label>
+                    <textarea name="diagnosis" class="form-control" placeholder="Enter diagnosis (optional)"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addVisitModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Create Visit</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>tableSearch('visitSearch', 'visitTable');</script>
+{% endblock %}

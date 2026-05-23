@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block title %}Patients{% endblock %}
+{% block page_title %}Patients{% endblock %}
+
+{% block top_actions %}
+<button class="btn btn-primary btn-sm" onclick="openModal('addPatientModal')">
+    <i class="fa-solid fa-plus"></i> Register Patient
+</button>
+{% endblock %}
+
+{% block content %}
+<!-- Search -->
+<div style="margin-bottom:20px;">
+    <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="patientSearch" placeholder="Search patients...">
+    </div>
+</div>
+
+<!-- Table -->
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fa-solid fa-hospital-user" style="margin-right:8px;color:var(--accent);"></i>All Patients ({{ patients|length }})</h3>
+    </div>
+    <div class="table-wrapper">
+        <table id="patientTable">
+            <thead>
+                <tr><th>ID</th><th>Name</th><th>Date of Birth</th><th>Gender</th><th>Contact</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for p in patients %}
+                <tr>
+                    <td>#{{ p.patient_id }}</td>
+                    <td><strong>{{ p.first_name }} {{ p.last_name }}</strong></td>
+                    <td>{{ p.dob.strftime('%b %d, %Y') if p.dob else '' }}</td>
+                    <td>
+                        <span class="badge badge-{{ p.gender|lower }}">{{ p.gender }}</span>
+                    </td>
+                    <td>{{ p.contact }}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn btn-secondary btn-sm" onclick="editPatient({{ p.patient_id }}, '{{ p.first_name }}', '{{ p.last_name }}', '{{ p.dob }}', '{{ p.gender }}', '{{ p.contact }}')">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <form method="POST" action="{{ url_for('patient_delete', pid=p.patient_id) }}" style="display:inline;" onsubmit="return confirm('Delete this patient?')">
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal-overlay" id="addPatientModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Register New Patient</h3>
+            <button class="modal-close" onclick="closeModal('addPatientModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form method="POST" action="{{ url_for('patient_add') }}">
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" name="first_name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" name="last_name" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        <input type="date" name="dob" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select name="gender" class="form-control" required>
+                            <option value="">Select...</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Contact</label>
+                    <input type="text" name="contact" class="form-control" placeholder="555-000-0000" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addPatientModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Register</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editPatientModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Edit Patient</h3>
+            <button class="modal-close" onclick="closeModal('editPatientModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form method="POST" id="editPatientForm">
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" name="first_name" id="ep_fn" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" name="last_name" id="ep_ln" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        <input type="date" name="dob" id="ep_dob" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select name="gender" id="ep_gender" class="form-control" required>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Contact</label>
+                    <input type="text" name="contact" id="ep_contact" class="form-control" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('editPatientModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+tableSearch('patientSearch', 'patientTable');
+
+function editPatient(id, fn, ln, dob, gender, contact) {
+    document.getElementById('editPatientForm').action = '/patients/edit/' + id;
+    document.getElementById('ep_fn').value = fn;
+    document.getElementById('ep_ln').value = ln;
+    document.getElementById('ep_dob').value = dob;
+    document.getElementById('ep_gender').value = gender;
+    document.getElementById('ep_contact').value = contact;
+    openModal('editPatientModal');
+}
+</script>
+{% endblock %}

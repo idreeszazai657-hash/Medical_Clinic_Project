@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Medical Clinic{% endblock %} — MedClinic</title>
+    <meta name="description" content="Professional Medical Clinic Management System">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-heart-pulse"></i>
+            <div>
+                <h2>MedClinic</h2>
+                <span>Management System</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                    <i class="fa-solid fa-chart-pie"></i> Dashboard
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Management</div>
+                <a href="{{ url_for('patients') }}" class="nav-link {% if request.endpoint in ['patients'] %}active{% endif %}">
+                    <i class="fa-solid fa-hospital-user"></i> Patients
+                </a>
+                <a href="{{ url_for('doctors') }}" class="nav-link {% if request.endpoint in ['doctors'] %}active{% endif %}">
+                    <i class="fa-solid fa-user-doctor"></i> Doctors
+                </a>
+                <a href="{{ url_for('visits') }}" class="nav-link {% if request.endpoint in ['visits','visit_detail'] %}active{% endif %}">
+                    <i class="fa-solid fa-calendar-check"></i> Visits
+                </a>
+                <a href="{{ url_for('prescriptions') }}" class="nav-link {% if request.endpoint in ['prescriptions'] %}active{% endif %}">
+                    <i class="fa-solid fa-prescription-bottle-medical"></i> Prescriptions
+                </a>
+                <a href="{{ url_for('services') }}" class="nav-link {% if request.endpoint in ['services'] %}active{% endif %}">
+                    <i class="fa-solid fa-stethoscope"></i> Services
+                </a>
+                <a href="{{ url_for('bills') }}" class="nav-link {% if request.endpoint in ['bills'] %}active{% endif %}">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Bills
+                </a>
+            </div>
+            {% if session.get('role') == 'Admin' %}
+            <div class="nav-section">
+                <div class="nav-section-title">Admin</div>
+                <a href="{{ url_for('users') }}" class="nav-link {% if request.endpoint in ['users'] %}active{% endif %}">
+                    <i class="fa-solid fa-users-gear"></i> Users
+                </a>
+            </div>
+            {% endif %}
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="avatar">{{ session.get('first_name','?')[0] }}</div>
+                <div class="user-info">
+                    <div class="name">{{ session.get('first_name','') }} {{ session.get('last_name','') }}</div>
+                    <div class="role">{{ session.get('role','') }}</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+        <header class="top-bar">
+            <h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
+            <div class="actions">
+                {% block top_actions %}{% endblock %}
+                <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-sm">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
+            </div>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for cat, msg in messages %}
+            <div class="alert alert-{{ cat }}">
+                <i class="fa-solid {% if cat=='success' %}fa-circle-check{% elif cat=='danger' %}fa-circle-xmark{% elif cat=='warning' %}fa-triangle-exclamation{% else %}fa-circle-info{% endif %}"></i>
+                {{ msg }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <div class="content-area">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</div>
+
+<script>
+// Client-side table search
+function tableSearch(inputId, tableId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    input.addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#' + tableId + ' tbody tr');
+        rows.forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+        });
+    });
+}
+
+// Modal toggle
+function openModal(id) {
+    document.getElementById(id).classList.add('active');
+}
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
+
+// Close modal on overlay click
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) {
+        e.target.classList.remove('active');
+    }
+});
+
+// Auto-dismiss flash messages
+setTimeout(function() {
+    document.querySelectorAll('.alert').forEach(a => {
+        a.style.transition = 'opacity 0.5s';
+        a.style.opacity = '0';
+        setTimeout(() => a.remove(), 500);
+    });
+}, 5000);
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

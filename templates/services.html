@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Medical Services{% endblock %}
+{% block page_title %}Medical Services{% endblock %}
+
+{% block top_actions %}
+<button class="btn btn-primary btn-sm" onclick="openModal('addServiceModal')">
+    <i class="fa-solid fa-plus"></i> Add Service
+</button>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:20px;">
+    <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="serviceSearch" placeholder="Search services...">
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fa-solid fa-stethoscope" style="margin-right:8px;color:var(--accent-blue);"></i>Service Catalog ({{ services|length }})</h3>
+    </div>
+    <div class="table-wrapper">
+        <table id="serviceTable">
+            <thead>
+                <tr><th>ID</th><th>Service Name</th><th>Price</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for s in services %}
+                <tr>
+                    <td>#{{ s.service_id }}</td>
+                    <td><strong>{{ s.service_name }}</strong></td>
+                    <td>${{ "%.2f"|format(s.price) }}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn btn-secondary btn-sm" onclick="editService({{ s.service_id }}, '{{ s.service_name }}', {{ s.price }})">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <form method="POST" action="{{ url_for('service_delete', sid=s.service_id) }}" style="display:inline;" onsubmit="return confirm('Delete this service?')">
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal-overlay" id="addServiceModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Add New Service</h3>
+            <button class="modal-close" onclick="closeModal('addServiceModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form method="POST" action="{{ url_for('service_add') }}">
+            <div class="modal-body">
+                <div class="form-group"><label>Service Name</label><input type="text" name="service_name" class="form-control" required></div>
+                <div class="form-group"><label>Price ($)</label><input type="number" name="price" step="0.01" min="0" class="form-control" required></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addServiceModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Add</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editServiceModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Edit Service</h3>
+            <button class="modal-close" onclick="closeModal('editServiceModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form method="POST" id="editServiceForm">
+            <div class="modal-body">
+                <div class="form-group"><label>Service Name</label><input type="text" name="service_name" id="es_name" class="form-control" required></div>
+                <div class="form-group"><label>Price ($)</label><input type="number" name="price" id="es_price" step="0.01" min="0" class="form-control" required></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('editServiceModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+tableSearch('serviceSearch', 'serviceTable');
+
+function editService(id, name, price) {
+    document.getElementById('editServiceForm').action = '/services/edit/' + id;
+    document.getElementById('es_name').value = name;
+    document.getElementById('es_price').value = price;
+    openModal('editServiceModal');
+}
+</script>
+{% endblock %}

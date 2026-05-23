@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Prescriptions{% endblock %}
+{% block page_title %}Prescriptions{% endblock %}
+
+{% block top_actions %}
+<button class="btn btn-primary btn-sm" onclick="openModal('addRxModal')">
+    <i class="fa-solid fa-plus"></i> Add Prescription
+</button>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:20px;">
+    <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="rxSearch" placeholder="Search prescriptions...">
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fa-solid fa-prescription-bottle-medical" style="margin-right:8px;color:var(--accent-pink);"></i>All Prescriptions ({{ prescriptions|length }})</h3>
+    </div>
+    <div class="table-wrapper">
+        <table id="rxTable">
+            <thead>
+                <tr><th>ID</th><th>Medicine</th><th>Dosage</th><th>Instructions</th><th>Patient</th><th>Visit Date</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for rx in prescriptions %}
+                <tr>
+                    <td>#{{ rx.prescription_id }}</td>
+                    <td><strong>{{ rx.medicine_name }}</strong></td>
+                    <td>{{ rx.dosage }}</td>
+                    <td>{{ rx.instructions or '—' }}</td>
+                    <td>{{ rx.pf }} {{ rx.pl }}</td>
+                    <td><a href="{{ url_for('visit_detail', vid=rx.visit_id) }}" style="text-decoration:underline;">{{ rx.visit_date.strftime('%b %d, %Y') if rx.visit_date else '' }}</a></td>
+                    <td>
+                        <form method="POST" action="{{ url_for('prescription_delete', pid=rx.prescription_id) }}" onsubmit="return confirm('Delete this prescription?')">
+                            <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal-overlay" id="addRxModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Add Prescription</h3>
+            <button class="modal-close" onclick="closeModal('addRxModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form method="POST" action="{{ url_for('prescription_add') }}">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Select Visit</label>
+                    <select name="visit_id" class="form-control" required>
+                        <option value="">Select a visit...</option>
+                        {% for v in visits %}
+                        <option value="{{ v.visit_id }}">#{{ v.visit_id }} — {{ v.first_name }} {{ v.last_name }} ({{ v.visit_date.strftime('%b %d, %Y') if v.visit_date else '' }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group"><label>Medicine Name</label><input type="text" name="medicine_name" class="form-control" required></div>
+                <div class="form-group"><label>Dosage</label><input type="text" name="dosage" class="form-control" placeholder="e.g. 500mg" required></div>
+                <div class="form-group"><label>Instructions</label><textarea name="instructions" class="form-control" placeholder="e.g. Take twice daily after meals"></textarea></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addRxModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Add</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>tableSearch('rxSearch', 'rxTable');</script>
+{% endblock %}

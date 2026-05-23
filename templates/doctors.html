@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}Doctors{% endblock %}
+{% block page_title %}Doctors{% endblock %}
+
+{% block top_actions %}
+<button class="btn btn-primary btn-sm" onclick="openModal('addDoctorModal')">
+    <i class="fa-solid fa-plus"></i> Add Doctor
+</button>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
+    <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="doctorSearch" placeholder="Search doctors...">
+    </div>
+    <div class="filter-tabs" id="specFilter">
+        <button class="filter-tab active" data-spec="all">All</button>
+        {% for s in specialties %}
+        <button class="filter-tab" data-spec="{{ s.specialty }}">{{ s.specialty }}</button>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fa-solid fa-user-doctor" style="margin-right:8px;color:var(--accent-purple);"></i>All Doctors ({{ doctors|length }})</h3>
+    </div>
+    <div class="table-wrapper">
+        <table id="doctorTable">
+            <thead>
+                <tr><th>ID</th><th>Name</th><th>Specialty</th><th>Contact</th><th>Room</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for d in doctors %}
+                <tr data-specialty="{{ d.specialty }}">
+                    <td>#{{ d.doctor_id }}</td>
+                    <td><strong>Dr. {{ d.first_name }} {{ d.last_name }}</strong></td>
+                    <td><span class="badge-specialty">{{ d.specialty }}</span></td>
+                    <td>{{ d.contact }}</td>
+                    <td>{{ d.room_number }}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn btn-secondary btn-sm" onclick="editDoctor({{ d.doctor_id }},'{{ d.first_name }}','{{ d.last_name }}','{{ d.specialty }}','{{ d.contact }}','{{ d.room_number }}')">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <form method="POST" action="{{ url_for('doctor_delete', did=d.doctor_id) }}" style="display:inline;" onsubmit="return confirm('Delete this doctor?')">
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal-overlay" id="addDoctorModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Add New Doctor</h3>
+            <button class="modal-close" onclick="closeModal('addDoctorModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form method="POST" action="{{ url_for('doctor_add') }}">
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group"><label>First Name</label><input type="text" name="first_name" class="form-control" required></div>
+                    <div class="form-group"><label>Last Name</label><input type="text" name="last_name" class="form-control" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Specialty</label><input type="text" name="specialty" class="form-control" required></div>
+                    <div class="form-group"><label>Room Number</label><input type="text" name="room_number" class="form-control" required></div>
+                </div>
+                <div class="form-group"><label>Contact</label><input type="text" name="contact" class="form-control" required></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addDoctorModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Add</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editDoctorModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Edit Doctor</h3>
+            <button class="modal-close" onclick="closeModal('editDoctorModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form method="POST" id="editDoctorForm">
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group"><label>First Name</label><input type="text" name="first_name" id="ed_fn" class="form-control" required></div>
+                    <div class="form-group"><label>Last Name</label><input type="text" name="last_name" id="ed_ln" class="form-control" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Specialty</label><input type="text" name="specialty" id="ed_spec" class="form-control" required></div>
+                    <div class="form-group"><label>Room Number</label><input type="text" name="room_number" id="ed_room" class="form-control" required></div>
+                </div>
+                <div class="form-group"><label>Contact</label><input type="text" name="contact" id="ed_contact" class="form-control" required></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('editDoctorModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+tableSearch('doctorSearch', 'doctorTable');
+
+// Specialty filter
+document.querySelectorAll('#specFilter .filter-tab').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('#specFilter .filter-tab').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const spec = this.dataset.spec;
+        document.querySelectorAll('#doctorTable tbody tr').forEach(row => {
+            row.style.display = (spec === 'all' || row.dataset.specialty === spec) ? '' : 'none';
+        });
+    });
+});
+
+function editDoctor(id, fn, ln, spec, contact, room) {
+    document.getElementById('editDoctorForm').action = '/doctors/edit/' + id;
+    document.getElementById('ed_fn').value = fn;
+    document.getElementById('ed_ln').value = ln;
+    document.getElementById('ed_spec').value = spec;
+    document.getElementById('ed_contact').value = contact;
+    document.getElementById('ed_room').value = room;
+    openModal('editDoctorModal');
+}
+</script>
+{% endblock %}
